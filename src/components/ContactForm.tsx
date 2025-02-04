@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import emailjs from '@emailjs/browser';
 
 const ContactForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,13 +16,37 @@ const ContactForm = () => {
     requirements: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Quote Request Received",
-      description: "We'll get back to you within 24 hours.",
-    });
-    setFormData({ name: "", email: "", company: "", requirements: "" });
+    setIsSubmitting(true);
+
+    try {
+      await emailjs.send(
+        'YOUR_SERVICE_ID', // You'll need to replace this
+        'YOUR_TEMPLATE_ID', // You'll need to replace this
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          company: formData.company,
+          message: formData.requirements,
+        },
+        'YOUR_PUBLIC_KEY' // You'll need to replace this
+      );
+
+      toast({
+        title: "Quote Request Sent Successfully",
+        description: "We'll get back to you within 24 hours.",
+      });
+      setFormData({ name: "", email: "", company: "", requirements: "" });
+    } catch (error) {
+      toast({
+        title: "Error Sending Request",
+        description: "Please try again later or contact us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -106,8 +132,8 @@ const ContactForm = () => {
               />
             </div>
 
-            <Button type="submit" className="w-full">
-              Submit Request
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Sending..." : "Submit Request"}
             </Button>
           </motion.form>
         </div>
