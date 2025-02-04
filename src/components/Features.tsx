@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { Chip, Shield, Zap, Clock, Server, Settings } from "lucide-react";
+import { Cpu, Shield, Zap, Clock, Server, Settings } from "lucide-react";
 
 const Features = () => {
   const features = [
     {
-      icon: Chip,
+      icon: Cpu,
       title: "Latest Hardware",
       description: "Access to the newest enterprise-grade components and processors",
     },
